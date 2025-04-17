@@ -17,6 +17,7 @@ import {
   FileText,
   Calculator,
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface FormData {
   weekday: string;
@@ -25,7 +26,6 @@ interface FormData {
   deliveryTime: number;
   averageKm: number;
   productionTime: number;
-  efficiency: number;
 }
 
 interface CalculationResult {
@@ -34,7 +34,8 @@ interface CalculationResult {
   cyclesPerDriver: number;
   ordersPerDriver: number;
   requiredDrivers: number;
-  scenario: 'A' | 'B' | 'C';
+  totalTimeToCustomer: number;
+  scenario: 'A' | 'B' | 'C' | 'D';
 }
 
 const INITIAL_FORM: FormData = {
@@ -44,27 +45,38 @@ const INITIAL_FORM: FormData = {
   deliveryTime: 0,
   averageKm: 0,
   productionTime: 0,
-  efficiency: 0.8,
+};
+
+const calculateScenario = (totalTimeToCustomer: number): 'A' | 'B' | 'C' | 'D' => {
+  if (totalTimeToCustomer <= 50) return 'A';
+  if (totalTimeToCustomer <= 60) return 'B';
+  if (totalTimeToCustomer <= 70) return 'C';
+  return 'D';
+};
+
+const getScenarioColor = (scenario: 'A' | 'B' | 'C' | 'D') => {
+  switch (scenario) {
+    case 'A': return 'bg-green-100 text-green-800 border-green-200';
+    case 'B': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+    case 'C': return 'bg-orange-100 text-orange-800 border-orange-200';
+    case 'D': return 'bg-red-100 text-red-800 border-red-200';
+    default: return '';
+  }
 };
 
 export const GuruPulseForm = () => {
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM);
   const [result, setResult] = useState<CalculationResult | null>(null);
 
-  const calculateScenario = (productionTime: number, efficiency: number): 'A' | 'B' | 'C' => {
-    if (productionTime <= 25 && efficiency >= 0.95) return 'A';
-    if (productionTime <= 30 && efficiency >= 0.75) return 'B';
-    return 'C';
-  };
-
   const handleCalculate = () => {
     const shiftDuration = formData.shift === 'lunch' ? 379 : 300;
     const returnTime = (formData.averageKm / 39.6) * 60;
-    const totalCycleTime = formData.productionTime + formData.deliveryTime + returnTime;
+    const totalTimeToCustomer = formData.productionTime + formData.deliveryTime;
+    const totalCycleTime = totalTimeToCustomer + returnTime;
     const cyclesPerDriver = shiftDuration / totalCycleTime;
-    const ordersPerDriver = cyclesPerDriver * 2 * formData.efficiency;
+    const ordersPerDriver = cyclesPerDriver * 2;
     const requiredDrivers = Math.ceil(formData.estimatedOrders / ordersPerDriver);
-    const scenario = calculateScenario(formData.productionTime, formData.efficiency);
+    const scenario = calculateScenario(totalTimeToCustomer);
 
     setResult({
       returnTime,
@@ -72,6 +84,7 @@ export const GuruPulseForm = () => {
       cyclesPerDriver,
       ordersPerDriver,
       requiredDrivers,
+      totalTimeToCustomer,
       scenario,
     });
 
@@ -138,7 +151,7 @@ export const GuruPulseForm = () => {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Tempo de Entrega (min)</Label>
+              <Label>Tempo de Entrega (ida) em minutos</Label>
               <Input
                 type="number"
                 placeholder="Tempo médio de ida"
@@ -147,7 +160,7 @@ export const GuruPulseForm = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>KM Médio</Label>
+              <Label>Distância Média de Entrega (km)</Label>
               <Input
                 type="number"
                 placeholder="Ex: 10"
@@ -156,23 +169,11 @@ export const GuruPulseForm = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Tempo de Produção (min)</Label>
+              <Label>Tempo de Produção e Liberação (min)</Label>
               <Input
                 type="number"
                 placeholder="Tempo médio de preparo"
                 onChange={(e) => setFormData({ ...formData, productionTime: Number(e.target.value) })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Eficiência do Entregador</Label>
-              <Input
-                type="number"
-                step="0.1"
-                placeholder="Ex: 0.8"
-                min="0"
-                max="1"
-                onChange={(e) => setFormData({ ...formData, efficiency: Number(e.target.value) })}
               />
             </div>
           </div>
@@ -195,28 +196,35 @@ export const GuruPulseForm = () => {
       </Card>
 
       {result && (
-        <Card className={`p-6 border-2 ${
-          result.scenario === 'A' ? 'scenario-a' :
-          result.scenario === 'B' ? 'scenario-b' :
-          'scenario-c'
-        }`}>
-          <h3 className="text-lg font-semibold mb-4">Resultados da Simulação</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="font-medium">Entregadores Necessários</p>
-              <p className="text-2xl font-bold">{result.requiredDrivers}</p>
-            </div>
-            <div>
-              <p className="font-medium">Ciclos por Entregador</p>
-              <p className="text-2xl font-bold">{result.cyclesPerDriver.toFixed(2)}</p>
-            </div>
-            <div>
-              <p className="font-medium">Pedidos por Entregador</p>
-              <p className="text-2xl font-bold">{result.ordersPerDriver.toFixed(2)}</p>
-            </div>
-            <div>
-              <p className="font-medium">Classificação do Cenário</p>
-              <p className="text-2xl font-bold">Cenário {result.scenario}</p>
+        <Card className="p-6">
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-2xl font-bold">
+                Número estimado de entregadores: {result.requiredDrivers}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Ciclos por entregador</p>
+                  <p className="text-lg font-semibold">{result.cyclesPerDriver.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Pedidos por entregador</p>
+                  <p className="text-lg font-semibold">{result.ordersPerDriver.toFixed(2)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Tempo de volta estimado</p>
+                  <p className="text-lg font-semibold">{result.returnTime.toFixed(1)} min</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Tempo total até o cliente</p>
+                  <p className="text-lg font-semibold">{result.totalTimeToCustomer.toFixed(1)} min</p>
+                </div>
+              </div>
+              <div className="pt-4">
+                <Badge className={getScenarioColor(result.scenario)}>
+                  Cenário {result.scenario}
+                </Badge>
+              </div>
             </div>
           </div>
         </Card>

@@ -6,40 +6,41 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";
+import { Info } from "lucide-react";
 
 export const Instructions = () => {
   return (
     <Card className="p-6">
       <Accordion type="single" collapsible>
         <AccordionItem value="instructions">
-          <AccordionTrigger>Instruções de Uso</AccordionTrigger>
+          <AccordionTrigger>
+            <div className="flex items-center gap-2">
+              <Info className="h-5 w-5" />
+              Como funciona o cálculo?
+            </div>
+          </AccordionTrigger>
           <AccordionContent>
             <div className="space-y-4 text-left">
               <p>
-                O Guru Pulse é um simulador para planejamento de escala de entregadores.
-                Os cálculos consideram:
-              </p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Turnos com durações fixas</li>
-                <li>Tempo médio de entrega com ida cuidadosa (comida japonesa)</li>
-                <li>Retorno 10% mais rápido</li>
-                <li>Eficiência prática da operação</li>
-              </ul>
-              <p>
-                Use os campos acima para simular sua demanda real. A classificação ajuda a
-                identificar gargalos e avaliar se o time está operando no ideal.
+                Este simulador estima a quantidade necessária de entregadores por turno 
+                com base no volume de pedidos e nas condições operacionais. O tempo 
+                total até o cliente define o nível de eficiência da operação, 
+                classificado de A a D. Quanto menor esse tempo, mais eficiente é o cenário.
               </p>
               <div className="mt-4">
                 <h4 className="font-semibold mb-2">Classificação dos Cenários:</h4>
                 <ul className="space-y-2">
                   <li className="p-2 bg-green-100 text-green-800 rounded">
-                    A – Máxima eficiência: Produção ≤ 25 min e Eficiência ≥ 95%
+                    A – Máxima eficiência: até 50 minutos
                   </li>
                   <li className="p-2 bg-yellow-100 text-yellow-800 rounded">
-                    B – Eficiência média: Produção ≤ 30 min e Eficiência ≥ 75%
+                    B – Eficiência alta: 51 a 60 minutos
+                  </li>
+                  <li className="p-2 bg-orange-100 text-orange-800 rounded">
+                    C – Eficiência média: 61 a 70 minutos
                   </li>
                   <li className="p-2 bg-red-100 text-red-800 rounded">
-                    C – Eficiência baixa: Produção ≤ 35 min e Eficiência ≥ 65%
+                    D – Eficiência baixa: acima de 70 minutos
                   </li>
                 </ul>
               </div>
