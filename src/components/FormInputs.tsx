@@ -14,9 +14,25 @@ interface FormInputsProps {
     stopTime: number;
   };
   setFormData: (data: any) => void;
+  onValidationChange: (isValid: boolean) => void;
 }
 
-export const FormInputs = ({ formData, setFormData }: FormInputsProps) => {
+export const FormInputs = ({ formData, setFormData, onValidationChange }: FormInputsProps) => {
+  // Check if all fields are filled
+  const isFormComplete = 
+    formData.weekday !== '' && 
+    formData.shift !== '' && 
+    formData.estimatedOrders > 0 && 
+    formData.deliveryTime > 0 && 
+    formData.averageKm > 0 && 
+    formData.productionTime > 0 && 
+    formData.stopTime > 0;
+
+  // Trigger validation change whenever form data changes
+  React.useEffect(() => {
+    onValidationChange(isFormComplete);
+  }, [formData, onValidationChange]);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="space-y-4">
@@ -110,4 +126,3 @@ export const FormInputs = ({ formData, setFormData }: FormInputsProps) => {
     </div>
   );
 };
-

@@ -31,6 +31,7 @@ const INITIAL_FORM: FormData = {
 export const GuruPulseForm = () => {
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM);
   const [result, setResult] = useState<ReturnType<typeof calculateDeliveryStats> | null>(null);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const handleCalculate = () => {
     const calculatedResult = calculateDeliveryStats(
@@ -45,11 +46,22 @@ export const GuruPulseForm = () => {
     toast.success('Cálculos realizados com sucesso!');
   };
 
+  const handleValidationChange = (isValid: boolean) => {
+    setIsFormValid(isValid);
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto space-y-8">
       <Card className="p-6">
-        <FormInputs formData={formData} setFormData={setFormData} />
-        <ActionButtons onCalculate={handleCalculate} />
+        <FormInputs 
+          formData={formData} 
+          setFormData={setFormData} 
+          onValidationChange={handleValidationChange} 
+        />
+        <ActionButtons 
+          onCalculate={handleCalculate} 
+          isDisabled={!isFormValid} 
+        />
       </Card>
 
       {result && <ResultCard {...result} />}
@@ -58,4 +70,3 @@ export const GuruPulseForm = () => {
     </div>
   );
 };
-
