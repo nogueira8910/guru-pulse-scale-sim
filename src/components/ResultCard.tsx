@@ -22,6 +22,15 @@ const getScenarioColor = (scenario: 'A' | 'B' | 'C' | 'D') => {
   }
 };
 
+const getScenarioDescription = (scenario: 'A' | 'B' | 'C' | 'D') => {
+  switch (scenario) {
+    case 'A': return 'Máxima eficiência: até 50 minutos';
+    case 'B': return 'Eficiência alta: 51 a 60 minutos';
+    case 'C': return 'Eficiência média: 61 a 70 minutos';
+    case 'D': return 'Eficiência baixa: acima de 70 minutos';
+  }
+};
+
 export const ResultCard = ({
   requiredDrivers,
   cyclesPerDriver,
@@ -67,7 +76,7 @@ export const ResultCard = ({
           </div>
           <div className="pt-4">
             <Badge className={getScenarioColor(scenario)}>
-              Cenário {scenario}
+              Cenário {scenario} – {getScenarioDescription(scenario)}
             </Badge>
           </div>
         </div>
@@ -75,4 +84,3 @@ export const ResultCard = ({
     </Card>
   );
 };
-

@@ -60,7 +60,8 @@ export const GuruPulseForm = () => {
         />
         <ActionButtons 
           onCalculate={handleCalculate} 
-          isDisabled={!isFormValid} 
+          isDisabled={!isFormValid}
+          resultData={result} 
         />
       </Card>
 
