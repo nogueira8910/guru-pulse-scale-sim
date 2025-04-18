@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,12 +11,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import {
-  FileSpreadsheet,
-  FileText,
-  Calculator,
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { FileSpreadsheet, FileText, Calculator } from 'lucide-react';
+import { ResultCard } from './ResultCard';
+import { Instructions } from './Instructions';
 
 interface FormData {
   weekday: string;
@@ -26,6 +22,7 @@ interface FormData {
   deliveryTime: number;
   averageKm: number;
   productionTime: number;
+  stopTime: number;
 }
 
 interface CalculationResult {
@@ -35,6 +32,7 @@ interface CalculationResult {
   ordersPerDriver: number;
   requiredDrivers: number;
   totalTimeToCustomer: number;
+  stopTime: number;
   scenario: 'A' | 'B' | 'C' | 'D';
 }
 
@@ -45,6 +43,7 @@ const INITIAL_FORM: FormData = {
   deliveryTime: 0,
   averageKm: 0,
   productionTime: 0,
+  stopTime: 0,
 };
 
 const calculateScenario = (totalTimeToCustomer: number): 'A' | 'B' | 'C' | 'D' => {
@@ -52,16 +51,6 @@ const calculateScenario = (totalTimeToCustomer: number): 'A' | 'B' | 'C' | 'D' =
   if (totalTimeToCustomer <= 60) return 'B';
   if (totalTimeToCustomer <= 70) return 'C';
   return 'D';
-};
-
-const getScenarioColor = (scenario: 'A' | 'B' | 'C' | 'D') => {
-  switch (scenario) {
-    case 'A': return 'bg-green-100 text-green-800 border-green-200';
-    case 'B': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case 'C': return 'bg-orange-100 text-orange-800 border-orange-200';
-    case 'D': return 'bg-red-100 text-red-800 border-red-200';
-    default: return '';
-  }
 };
 
 export const GuruPulseForm = () => {
@@ -72,7 +61,7 @@ export const GuruPulseForm = () => {
     const shiftDuration = formData.shift === 'lunch' ? 379 : 300;
     const returnTime = (formData.averageKm / 39.6) * 60;
     const totalTimeToCustomer = formData.productionTime + formData.deliveryTime;
-    const totalCycleTime = totalTimeToCustomer + returnTime;
+    const totalCycleTime = totalTimeToCustomer + formData.stopTime + returnTime;
     const cyclesPerDriver = shiftDuration / totalCycleTime;
     const ordersPerDriver = cyclesPerDriver * 2;
     const requiredDrivers = Math.ceil(formData.estimatedOrders / ordersPerDriver);
@@ -85,6 +74,7 @@ export const GuruPulseForm = () => {
       ordersPerDriver,
       requiredDrivers,
       totalTimeToCustomer,
+      stopTime: formData.stopTime,
       scenario,
     });
 
@@ -145,6 +135,7 @@ export const GuruPulseForm = () => {
                 type="number"
                 placeholder="Quantidade total prevista"
                 onChange={(e) => setFormData({ ...formData, estimatedOrders: Number(e.target.value) })}
+                required
               />
             </div>
           </div>
@@ -156,6 +147,7 @@ export const GuruPulseForm = () => {
                 type="number"
                 placeholder="Tempo médio de ida"
                 onChange={(e) => setFormData({ ...formData, deliveryTime: Number(e.target.value) })}
+                required
               />
             </div>
 
@@ -165,6 +157,7 @@ export const GuruPulseForm = () => {
                 type="number"
                 placeholder="Ex: 10"
                 onChange={(e) => setFormData({ ...formData, averageKm: Number(e.target.value) })}
+                required
               />
             </div>
 
@@ -174,6 +167,17 @@ export const GuruPulseForm = () => {
                 type="number"
                 placeholder="Tempo médio de preparo"
                 onChange={(e) => setFormData({ ...formData, productionTime: Number(e.target.value) })}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Tempo de Parada no Cliente (min)</Label>
+              <Input
+                type="number"
+                placeholder="Tempo médio de parada"
+                onChange={(e) => setFormData({ ...formData, stopTime: Number(e.target.value) })}
+                required
               />
             </div>
           </div>
@@ -195,40 +199,7 @@ export const GuruPulseForm = () => {
         </div>
       </Card>
 
-      {result && (
-        <Card className="p-6">
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <h3 className="text-2xl font-bold">
-                Número estimado de entregadores: {result.requiredDrivers}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Ciclos por entregador</p>
-                  <p className="text-lg font-semibold">{result.cyclesPerDriver.toFixed(2)}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Pedidos por entregador</p>
-                  <p className="text-lg font-semibold">{result.ordersPerDriver.toFixed(2)}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Tempo de volta estimado</p>
-                  <p className="text-lg font-semibold">{result.returnTime.toFixed(1)} min</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Tempo total até o cliente</p>
-                  <p className="text-lg font-semibold">{result.totalTimeToCustomer.toFixed(1)} min</p>
-                </div>
-              </div>
-              <div className="pt-4">
-                <Badge className={getScenarioColor(result.scenario)}>
-                  Cenário {result.scenario}
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </Card>
-      )}
+      {result && <ResultCard {...result} />}
     </div>
   );
 };
