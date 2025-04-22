@@ -6,6 +6,7 @@ import { FormInputs } from './FormInputs';
 import { ActionButtons } from './ActionButtons';
 import { ResultCard } from './ResultCard';
 import { Instructions } from './Instructions';
+import { PulseInsights } from './PulseInsights';
 import { calculateDeliveryStats } from '@/utils/calculators';
 
 interface FormData {
@@ -65,7 +66,19 @@ export const GuruPulseForm = () => {
         />
       </Card>
 
-      {result && <ResultCard {...result} />}
+      {result && (
+        <>
+          <ResultCard {...result} />
+          <PulseInsights 
+            scenario={result.scenario}
+            productionTime={formData.productionTime}
+            stopTime={formData.stopTime}
+            deliveryTime={formData.deliveryTime}
+            averageKm={formData.averageKm}
+            totalTimeToCustomer={result.totalTimeToCustomer}
+          />
+        </>
+      )}
       
       <Instructions />
     </div>
