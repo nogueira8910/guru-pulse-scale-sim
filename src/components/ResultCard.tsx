@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
@@ -24,10 +23,10 @@ const getScenarioColor = (scenario: 'A' | 'B' | 'C' | 'D') => {
 
 const getScenarioDescription = (scenario: 'A' | 'B' | 'C' | 'D') => {
   switch (scenario) {
-    case 'A': return 'Máxima eficiência: até 50 minutos';
-    case 'B': return 'Eficiência alta: 51 a 60 minutos';
-    case 'C': return 'Eficiência média: 61 a 70 minutos';
-    case 'D': return 'Eficiência baixa: acima de 70 minutos';
+    case 'A': return 'Eficiência Alta: até 50 minutos';
+    case 'B': return 'Eficiência Regular: 51 a 60 minutos';
+    case 'C': return 'Eficiência Baixa: 61 a 70 minutos';
+    case 'D': return 'Eficiência Crítica: acima de 70 minutos';
   }
 };
 
