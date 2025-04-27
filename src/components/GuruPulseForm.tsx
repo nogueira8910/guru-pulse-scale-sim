@@ -36,11 +36,12 @@ export const GuruPulseForm = () => {
 
   const handleCalculate = () => {
     const calculatedResult = calculateDeliveryStats(
+      formData.shift,
       formData.estimatedOrders,
-      formData.productionTime,
       formData.deliveryTime,
-      formData.stopTime,
-      formData.averageKm
+      formData.averageKm,
+      formData.productionTime,
+      formData.stopTime
     );
     setResult(calculatedResult);
     toast.success('Cálculos realizados com sucesso!');
