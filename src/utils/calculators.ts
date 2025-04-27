@@ -1,3 +1,4 @@
+
 interface CalculationResult {
   returnTime: number;
   totalCycleTime: number;
@@ -17,20 +18,28 @@ export const calculateScenario = (totalTimeToCustomer: number): 'A' | 'B' | 'C' 
 };
 
 export const calculateDeliveryStats = (
-  shift: string,
-  estimatedOrders: number,
-  deliveryTime: number,
-  averageKm: number,
+  totalOrders: number,
   productionTime: number,
-  stopTime: number
+  deliveryTime: number,
+  stopTime: number,
+  averageKm: number
 ): CalculationResult => {
-  const shiftDuration = shift === 'lunch' ? 379 : 300;
+  const ORDERS_PER_TRIP = 1.9; // 90% efficiency for 2 orders per trip
+  const WEEKLY_HOURS = 48;
   const returnTime = (averageKm / 39.6) * 60;
   const totalTimeToCustomer = productionTime + deliveryTime;
   const totalCycleTime = totalTimeToCustomer + stopTime + returnTime;
-  const cyclesPerDriver = shiftDuration / totalCycleTime;
-  const ordersPerDriver = cyclesPerDriver * 2;
-  const requiredDrivers = Math.ceil(estimatedOrders / ordersPerDriver);
+  
+  // Calculate required drivers
+  const requiredTrips = totalOrders / ORDERS_PER_TRIP;
+  const totalTripTime = requiredTrips * totalCycleTime;
+  const totalHours = totalTripTime / 60;
+  const requiredDrivers = Math.ceil(totalHours / WEEKLY_HOURS);
+  
+  // Calculate cycles and orders per driver
+  const cyclesPerDriver = (WEEKLY_HOURS * 60) / totalCycleTime;
+  const ordersPerDriver = cyclesPerDriver * ORDERS_PER_TRIP;
+  
   const scenario = calculateScenario(totalTimeToCustomer);
 
   return {
