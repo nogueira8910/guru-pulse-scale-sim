@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +8,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import Index from "./pages/Index";
 import Comparativo from "./pages/Comparativo";
 import NotFound from "./pages/NotFound";
+import History from "./pages/History";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +25,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/comparativo" element={<Comparativo />} />
+                <Route path="/historico" element={<History />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
