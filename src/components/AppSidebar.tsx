@@ -1,5 +1,4 @@
-
-import { Home, Compare, History } from "lucide-react";
+import { Home, GitCompare, History } from "lucide-react";
 import { useLocation, Link } from "react-router-dom";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 
@@ -10,7 +9,7 @@ const items = [{
 }, {
   title: "Comparativo",
   url: "/comparativo",
-  icon: Compare
+  icon: GitCompare
 }, {
   title: "Histórico",
   url: "/historico",
