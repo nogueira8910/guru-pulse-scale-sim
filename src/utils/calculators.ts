@@ -1,4 +1,3 @@
-
 interface CalculationResult {
   returnTime: number;
   totalCycleTime: number;
@@ -45,4 +44,3 @@ export const calculateDeliveryStats = (
     scenario,
   };
 };
-
