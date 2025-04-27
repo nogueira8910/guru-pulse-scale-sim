@@ -1,5 +1,7 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Helmet } from "lucide-react";
 
 interface ResultCardProps {
   requiredDrivers: number;
@@ -44,7 +46,8 @@ export const ResultCard = ({
     <Card className="p-6">
       <div className="space-y-6">
         <div className="space-y-4">
-          <h3 className="text-2xl font-bold">
+          <h3 className="text-2xl font-bold flex items-center gap-2">
+            <Helmet className="h-6 w-6 text-tiffany" />
             Número estimado de entregadores: {requiredDrivers}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
