@@ -44,7 +44,9 @@ export const GuruPulseForm = () => {
       formData.stopTime
     );
     setResult(calculatedResult);
-    toast.success('Cálculos realizados com sucesso!');
+    toast.success('Cálculos realizados com sucesso!', {
+      description: 'Seus resultados foram processados e estão prontos para análise.'
+    });
   };
 
   const handleValidationChange = (isValid: boolean) => {
@@ -52,8 +54,8 @@ export const GuruPulseForm = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-8">
-      <Card className="p-6">
+    <div className="w-full space-y-10">
+      <Card className="card-enhanced p-8">
         <FormInputs 
           formData={formData} 
           setFormData={setFormData} 
@@ -67,7 +69,7 @@ export const GuruPulseForm = () => {
       </Card>
 
       {result && (
-        <>
+        <div className="space-y-8 animate-in fade-in-50 duration-500">
           <ResultCard {...result} />
           <PulseInsights 
             scenario={result.scenario}
@@ -77,7 +79,7 @@ export const GuruPulseForm = () => {
             averageKm={formData.averageKm}
             totalTimeToCustomer={result.totalTimeToCustomer}
           />
-        </>
+        </div>
       )}
       
       <Instructions />
