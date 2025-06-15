@@ -110,34 +110,21 @@ export const ActionButtons = ({ onCalculate, isDisabled = false, resultData }: A
   };
 
   return (
-    <div className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
+    <div className="mt-6 flex flex-wrap gap-4">
       <Button 
         onClick={onCalculate} 
-        className="button-primary min-w-[140px]" 
+        className="bg-tiffany hover:bg-tiffany-dark" 
         disabled={isDisabled}
-        size="lg"
       >
-        <Calculator className="mr-2 h-5 w-5" />
+        <Calculator className="mr-2 h-4 w-4" />
         Calcular
       </Button>
-      <Button 
-        onClick={exportToExcel} 
-        variant="outline" 
-        disabled={isDisabled || !resultData}
-        size="lg"
-        className="min-w-[140px] border-tiffany/20 text-tiffany hover:bg-tiffany/5"
-      >
-        <FileSpreadsheet className="mr-2 h-5 w-5" />
+      <Button onClick={exportToExcel} variant="outline" disabled={isDisabled || !resultData}>
+        <FileSpreadsheet className="mr-2 h-4 w-4" />
         Exportar Excel
       </Button>
-      <Button 
-        onClick={exportToPDF} 
-        variant="outline" 
-        disabled={isDisabled || !resultData}
-        size="lg"
-        className="min-w-[140px] border-tiffany/20 text-tiffany hover:bg-tiffany/5"
-      >
-        <FileText className="mr-2 h-5 w-5" />
+      <Button onClick={exportToPDF} variant="outline" disabled={isDisabled || !resultData}>
+        <FileText className="mr-2 h-4 w-4" />
         Salvar PDF
       </Button>
     </div>

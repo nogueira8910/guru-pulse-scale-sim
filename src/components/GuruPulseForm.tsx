@@ -1,7 +1,9 @@
 
 import React, { useState } from 'react';
+import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { FormWizard } from './FormWizard';
+import { FormInputs } from './FormInputs';
+import { ActionButtons } from './ActionButtons';
 import { ResultCard } from './ResultCard';
 import { Instructions } from './Instructions';
 import { PulseInsights } from './PulseInsights';
@@ -31,36 +33,18 @@ export const GuruPulseForm = () => {
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM);
   const [result, setResult] = useState<ReturnType<typeof calculateDeliveryStats> | null>(null);
   const [isFormValid, setIsFormValid] = useState(false);
-  const [isCalculating, setIsCalculating] = useState(false);
 
-  const handleCalculate = async () => {
-    setIsCalculating(true);
-    
-    // Simular processamento
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    try {
-      const calculatedResult = calculateDeliveryStats(
-        formData.shift,
-        formData.estimatedOrders,
-        formData.deliveryTime,
-        formData.averageKm,
-        formData.productionTime,
-        formData.stopTime
-      );
-      
-      setResult(calculatedResult);
-      
-      toast.success('Simulação calculada com sucesso!', {
-        description: `${calculatedResult.requiredDrivers} entregadores necessários para ${formData.estimatedOrders} pedidos.`
-      });
-    } catch (error) {
-      toast.error('Erro ao calcular simulação', {
-        description: 'Verifique os dados inseridos e tente novamente.'
-      });
-    } finally {
-      setIsCalculating(false);
-    }
+  const handleCalculate = () => {
+    const calculatedResult = calculateDeliveryStats(
+      formData.shift,
+      formData.estimatedOrders,
+      formData.deliveryTime,
+      formData.averageKm,
+      formData.productionTime,
+      formData.stopTime
+    );
+    setResult(calculatedResult);
+    toast.success('Cálculos realizados com sucesso!');
   };
 
   const handleValidationChange = (isValid: boolean) => {
@@ -68,17 +52,22 @@ export const GuruPulseForm = () => {
   };
 
   return (
-    <div className="w-full space-y-10">
-      <FormWizard 
-        formData={formData} 
-        setFormData={setFormData} 
-        onValidationChange={handleValidationChange}
-        onCalculate={handleCalculate}
-        isCalculating={isCalculating}
-      />
+    <div className="w-full max-w-4xl mx-auto space-y-8">
+      <Card className="p-6">
+        <FormInputs 
+          formData={formData} 
+          setFormData={setFormData} 
+          onValidationChange={handleValidationChange} 
+        />
+        <ActionButtons 
+          onCalculate={handleCalculate} 
+          isDisabled={!isFormValid}
+          resultData={result} 
+        />
+      </Card>
 
       {result && (
-        <div className="space-y-8 animate-in fade-in-50 duration-500">
+        <>
           <ResultCard {...result} />
           <PulseInsights 
             scenario={result.scenario}
@@ -88,7 +77,7 @@ export const GuruPulseForm = () => {
             averageKm={formData.averageKm}
             totalTimeToCustomer={result.totalTimeToCustomer}
           />
-        </div>
+        </>
       )}
       
       <Instructions />
