@@ -52,7 +52,7 @@ export const GuruPulseForm = () => {
       setResult(calculatedResult);
       
       toast.success('Simulação calculada com sucesso!', {
-        description: `${calculatedResult.deliveryMen} entregadores necessários para ${formData.estimatedOrders} pedidos.`
+        description: `${calculatedResult.requiredDrivers} entregadores necessários para ${formData.estimatedOrders} pedidos.`
       });
     } catch (error) {
       toast.error('Erro ao calcular simulação', {
